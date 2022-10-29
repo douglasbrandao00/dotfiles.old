@@ -74,8 +74,19 @@ lspconfig.sumneko_lua.setup({
 })
 lspconfig.tsserver.setup({
 	on_attach = lsp_settings,
-	filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+	filetypes = {
+		"javascript",
+		"javascriptreact",
+		"javascript.jsx",
+		"typescript",
+		"typescriptreact",
+		"typescript.tsx",
+	},
 	cmd = { "typescript-language-server", "--stdio" },
+})
+
+lspconfig["pyright"].setup({
+	on_attach = lsp_settings,
 })
 
 local formatting = null_ls.builtins.formatting

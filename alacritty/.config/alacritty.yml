@@ -2,7 +2,7 @@ window:
   startup_mode: Maximized
   title: Artizan
 
-background_opacity: 0.7
+background_opacity: 0.9
 transparent_background_colors: true
 scrolling:
   history: 50000
@@ -22,7 +22,7 @@ font:
     family: MesloLGS NF
     style: Bold Italic
 
-  size: 17.0
+  size: 14.0
 colors:
   primary:
    background: '#222222'
