@@ -2,7 +2,7 @@ window:
   startup_mode: Maximized
   title: Artizan
 
-background_opacity: 0.9
+background_opacity: 0.8
 transparent_background_colors: true
 scrolling:
   history: 50000

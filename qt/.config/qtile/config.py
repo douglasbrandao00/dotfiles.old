@@ -13,7 +13,6 @@ from libqtile.widget.groupbox import GroupBox
 from libqtile.widget.spacer import Spacer
 from libqtile.widget.systray import Systray
 from libqtile.widget.windowname import WindowName
-from libqtile.extension.dmenu import DmenuRun
 
 mod = "mod4"
 terminal = "alacritty"
@@ -76,7 +75,7 @@ keys = [
 
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "r", lazy.spawn('rofi -show run'), desc="Spawn a command using a prompt widget"),
+    Key([mod], "r", lazy.spawn('rofi -show drun'), desc="Spawn a command using a prompt widget"),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod], "w", lazy.spawn(browser), desc="Launch browser"),
 ]
