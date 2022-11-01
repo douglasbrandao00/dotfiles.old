@@ -1,15 +1,49 @@
 import os
-import subprocess 
+import subprocess
 
-from libqtile import bar, layout, widget
+from libqtile import qtile
+from libqtile import layout
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile import hook
+from libqtile.widget.textbox import TextBox
+from libqtile.bar import Bar
+from libqtile.widget.clock import Clock
+from libqtile.widget.groupbox import GroupBox
+from libqtile.widget.spacer import Spacer
+from libqtile.widget.systray import Systray
+from libqtile.widget.windowname import WindowName
+from libqtile.extension.dmenu import DmenuRun
 
 mod = "mod4"
 terminal = "alacritty"
 browser = "brave"
-
+gruvbox = {
+    'bg':           '#282828',
+    'fg':           '#d4be98',
+    'dark-red':     '#ea6962',
+    'red':          '#ea6962',
+    'dark-green':   '#a9b665',
+    'green':        '#a9b665',
+    'dark-yellow':  '#e78a4e',
+    'yellow':       '#d8a657',
+    'dark-blue':    '#7daea3',
+    'blue':         '#7daea3',
+    'dark-magenta': '#d3869b',
+    'magenta':      '#d3869b',
+    'dark-cyan':    '#89b482',
+    'cyan':         '#89b482',
+    'dark-gray':    '#665c54',
+    'gray':         '#928374',
+    'white':        "#ffffff",
+    'fg4':          '#766f64',
+    'fg3':          '#665c54',
+    'fg2':          '#504945',
+    'fg1':          '#3c3836',
+    'bg0':          '#32302f',
+    'fg0':          '#1d2021',
+    'fg9':          '#ebdbb2'
+}
 keys = [
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
@@ -52,34 +86,21 @@ groups = [Group(i) for i in "123456789"]
 for i in groups:
     keys.extend(
         [
-            # mod1 + letter of group = switch to group
             Key(
                 [mod],
                 i.name,
                 lazy.group[i.name].toscreen(),
                 desc="Switch to group {}".format(i.name),
             ),
-            # mod1 + shift + letter of group = switch to & move focused window to group
             Key(
                 [mod, "shift"],
                 i.name,
                 lazy.window.togroup(i.name, switch_group=True),
                 desc="Switch to & move focused window to group {}".format(i.name),
             ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod1 + shift + letter of group = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
         ]
     )
 
-colors = {
-        "primary": "#000000",
-        "secondary": "#EEEEEE",
-        }
-fonts = {
-        "main": "Ubuntu Bold"
-        }
 layout_theme = {"border_width": 2,
                 "margin": 8,
                 "border_focus": "DC5F00",
@@ -98,37 +119,43 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
+
+bar = Bar([
+    GroupBox(
+        disable_drag=True,
+        active=gruvbox['gray'],
+        inactive=gruvbox['dark-gray'],
+        highlight_method='line',
+        block_highlight_text_color=gruvbox['cyan'],
+        borderwidth=0,
+        highlight_color=gruvbox['bg'],
+        background=gruvbox['bg']
+    ),
+    Spacer(length=20, background=gruvbox['bg']),
+    WindowName(foreground=gruvbox['fg']),
+    Clock(
+        padding=8,
+        background=gruvbox['bg0'],
+        foreground=gruvbox["white"],
+        format=' %d/%m/%Y %H:%M'
+    ),
+    Spacer(length=20, background=gruvbox['fg0']),
+    Systray(
+        background=gruvbox['fg0']
+    ),
+    Spacer(length=20, background=gruvbox['fg0']),
+    TextBox(
+        text='  ',
+        mouse_callbacks={'Button1': lambda: qtile.cmd_spawn('gnome-control-center')},
+        fontsize=18,
+        background=gruvbox['fg0'],
+        foreground=gruvbox["yellow"],
+        padding=0),
+    Spacer(length=20, background=gruvbox['fg0']),
+], background=gruvbox['bg'], size=26)
+
 screens = [
-    Screen(
-        top=bar.Bar(
-            [
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.Sep(linewidth=0, padding=6),
-                widget.WindowName(font=fonts["main"], fontsize=16),
-                widget.Systray(background=colors["secondary"]),
-                widget.Sep(linewidth=0, padding=6),
-                widget.Clock(format="%d/%m/%Y - %H:%M"),
-                widget.Sep(linewidth=0, padding=12),
-            ],
-            24,
-        ),
-    ),
-    Screen(
-        top=bar.Bar(
-            [
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.Sep(linewidth=0, padding=6),
-                widget.WindowName(font=fonts["main"], fontsize=16),
-                widget.Systray(background=colors["secondary"]),
-                widget.Sep(linewidth=0, padding=6),
-                widget.Clock(format="%d/%m/%Y - %H:%M"),
-                widget.Sep(linewidth=0, padding=12),
-            ],
-            24,
-        ),
-    ),
+    Screen(top=bar),
 ]
 
 mouse = [
@@ -154,6 +181,7 @@ floating_layout = layout.Floating(
         Match(title="pinentry"),  # GPG key password entry
     ]
 )
+
 
 @hook.subscribe.startup_once
 def autostart():
