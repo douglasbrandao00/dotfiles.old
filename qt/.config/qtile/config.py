@@ -16,6 +16,7 @@ from libqtile.widget.windowname import WindowName
 from libqtile.widget.volume import Volume
 from libqtile.widget.memory import Memory
 from libqtile.widget.battery import Battery
+from libqtile.widget.cpu import CPU
 
 mod = "mod4"
 terminal = "alacritty"
@@ -179,6 +180,16 @@ screens = [
                 groupbox,
                 spacer,
                 WindowName(foreground=gruvbox["fg"]),
+                Spacer(length=10, background=gruvbox["yellow"]),
+                TextBox(
+                    text="",
+                    fontsize=22,
+                    background=gruvbox["yellow"],
+                    foreground=gruvbox["white"],
+                    padding=0,
+                ),
+                CPU(background=gruvbox["yellow"], format='{load_percent}%'),
+                Spacer(length=10, background=gruvbox["yellow"]),
                 Spacer(length=10, background=gruvbox["green"]),
                 TextBox(
                     text="",

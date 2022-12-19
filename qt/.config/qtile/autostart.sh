@@ -8,5 +8,5 @@ nitrogen --restore  &
 blueman-tray &
 flameshot &
 globalprotect launch-ui &
-xrandr --output HDMI-1 --left-of eDP-1
+# xrandr --output HDMI-1 --left-of eDP-1
  
