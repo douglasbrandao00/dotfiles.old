@@ -1,56 +1,22 @@
-import os
 import subprocess
-
-from libqtile import qtile
-from libqtile import layout
+import os
+from libqtile import hook
+from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen, KeyChord
 from libqtile.lazy import lazy
-from libqtile import hook
-from libqtile.widget.textbox import TextBox
-from libqtile.bar import Bar
-from libqtile.widget.clock import Clock
-from libqtile.widget.groupbox import GroupBox
-from libqtile.widget.spacer import Spacer
-from libqtile.widget.systray import Systray
-from libqtile.widget.windowname import WindowName
-from libqtile.widget.volume import Volume
-from libqtile.widget.memory import Memory
-from libqtile.widget.battery import Battery
-from libqtile.widget.cpu import CPU
+
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    subprocess.Popen([home])
 
 mod = "mod4"
 terminal = "alacritty"
-browser = "brave"
-gruvbox = {
-    "bg": "#282828",
-    "fg": "#d4be98",
-    "dark-red": "#ea6962",
-    "red": "#ea6962",
-    "dark-green": "#a9b665",
-    "green": "#a9b665",
-    "dark-yellow": "#e78a4e",
-    "yellow": "#d8a657",
-    "dark-blue": "#7daea3",
-    "blue": "#7daea3",
-    "dark-magenta": "#d3869b",
-    "magenta": "#d3869b",
-    "dark-cyan": "#89b482",
-    "cyan": "#89b482",
-    "dark-gray": "#665c54",
-    "gray": "#928374",
-    "white": "#ffffff",
-    "fg4": "#766f64",
-    "fg3": "#665c54",
-    "fg2": "#504945",
-    "fg1": "#3c3836",
-    "bg0": "#32302f",
-    "fg0": "#1d2021",
-    "fg9": "#ebdbb2",
-}
+browser = "brave-browser"
 
 SOUND_VOLUME_TOGGLE_MUTE = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-SOUND_VOLUME_DOWN = "amixer sset Master 5%-"
-SOUND_VOLUME_UP = "amixer sset Master 5%+"
+SOUND_VOLUME_DOWN = "amixer sset Master 2%-"
+SOUND_VOLUME_UP = "amixer sset Master 2%+"
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -114,213 +80,240 @@ keys = [
     # Utilites
 ]
 
-groups = [Group(i) for i in "123456789"]
+groups = [Group(i) for i in ["", "","", "", ""]]
+group_hotkeys = "12345"
 
-for i in groups:
+for g, k in zip(groups, group_hotkeys):
     keys.extend(
         [
+            # mod1 + letter of group = switch to group
             Key(
                 [mod],
-                i.name,
-                lazy.group[i.name].toscreen(),
-                desc="Switch to group {}".format(i.name),
+                k,
+                lazy.group[g.name].toscreen(),
+                desc=f"Switch to group {g.name}",
             ),
+            # mod1 + shift + letter of group = switch to & move focused window to group
             Key(
                 [mod, "shift"],
-                i.name,
-                lazy.window.togroup(i.name, switch_group=True),
-                desc="Switch to & move focused window to group {}".format(i.name),
+                k,
+                lazy.window.togroup(g.name, switch_group=False),
+                desc=f"Switch to & move focused window to group {g.name}",
             ),
+            # Or, use below if you prefer not to switch to that group.
+            # # mod1 + shift + letter of group = move focused window to group
+            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
+            #     desc="move focused window to group {}".format(i.name)),
         ]
     )
 
-layout_theme = {
-    "border_width": 2,
-    "margin": 8,
-    "border_focus": "DC5F00",
-    "border_normal": "000000",
-}
+#Colors
+gruvBox = {
+        "red":"#A54242"
+        }
+catppuccin = {
+    "flamingo": "#F3CDCD",
+    "mauve": "#DDB6F2",
+    "pink": "#f5c2e7",
+    "maroon": "#e8a2af",
+    "red": "#f28fad",
+    "peach": "#f8bd96",
+    "yellow": "#fae3b0",
+    "green": "#abe9b3",
+    "teal": "#b4e8e0",
+    "blue": "#96cdfb",
+    "sky": "#89dceb",
+    "white": "#d9e0ee",
+    "gray": "#6e6c7e",
+    "black": "#1a1826",
+        }
 
 layouts = [
-    layout.MonadTall(**layout_theme),
-    layout.Max(**layout_theme),
+    layout.MonadTall(
+        margin=15,
+        border_width=2,
+        ),
+    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
+    layout.Max(),
 ]
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=12,
-    padding=3,
+    font="JetBrainsMono Nerd Font",
+    fontsize=16,
+    padding=2,
+    forground=catppuccin["black"],
 )
 extension_defaults = widget_defaults.copy()
 
-groupbox = GroupBox(
-    disable_drag=True,
-    fontsize=19,
-    margin_y=3,
-    margin_x=0,
-    padding_y=5,
-    padding_x=3,
-    borderwidth=3,
-    highlight_method="line",
-    highlight_color=gruvbox["bg0"],
-    this_current_screen_border=gruvbox["red"],
-    this_screen_border=gruvbox["red"],
-    other_current_screen_border=gruvbox["red"],
-    active=gruvbox["red"],
-    inactive=gruvbox["dark-gray"],
-    block_highlight_text_color=gruvbox["red"],
-    background=gruvbox["bg"],
-)
-spacer = Spacer(length=20, background=gruvbox["bg0"])
+def get_widgets(primary=False):
+    widgets = [
+        widget.Spacer(
+            length=3,
+            background="#00000000",
+            ),
+        #GroupBox
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=gruvBox["red"],
+            background="#00000000",
+            ),
+        widget.GroupBox(
+            highlight_method="line",
+            background=gruvBox["red"],
+            highlight_color=[gruvBox["red"], gruvBox["red"]],
+            inactive=catppuccin["black"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=gruvBox["red"],
+            background="#00000000",
+            ),
+        widget.Spacer(
+            length=9,
+            background="#00000000",
+            ),
+
+        widget.WindowName(
+            fontsize=12,
+            foreground=catppuccin["white"]
+            ),
+        #Audio
+         widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["sky"],
+            background="#00000000",
+            ),
+        widget.Volume(
+            fmt="墳 {}",
+            mute_command="amixer -D pulse set Master toggle",
+            foreground=catppuccin["black"],
+            background=catppuccin["sky"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["sky"],
+            background="#00000000",
+            ),
+        #Battery
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["yellow"],
+            background="#00000000",
+            ),
+        widget.Battery(
+            format=" {percent:2.0%}",
+            foreground=catppuccin["black"],
+            background=catppuccin["yellow"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["yellow"],
+            background="#00000000",
+            ),
+        #CPU
+         widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["peach"],
+            background="#00000000",
+            ),
+        widget.CPU(
+            format=" {load_percent:04}%",
+            foreground=catppuccin["black"],
+            background=catppuccin["peach"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["peach"],
+            background="#00000000",
+            ),
+        #Memory
+         widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["green"],
+            background="#00000000",
+            ),
+        widget.Memory(
+            format=" {MemPercent}%",
+            foreground=catppuccin["black"],
+            background=catppuccin["green"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["green"],
+            background="#00000000",
+            ),
+        #Time
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["maroon"],
+            background="#00000000",
+            ),
+        widget.Clock(
+            format=" %I:%M %p",
+            foreground=catppuccin["black"],
+            background=catppuccin["maroon"],
+            ),
+        widget.Clock(
+                format=" %d/%m/%y ",
+            foreground=catppuccin["black"],
+            background=catppuccin["maroon"],
+            ),
+        widget.TextBox(
+            text="",
+            padding=0,
+            fontsize=30,
+            foreground=catppuccin["maroon"],
+            background="#00000000",
+            ),
+        widget.Spacer(length=3,background="#00000000")]
+    if primary:
+        widgets.insert(6 , widget.Spacer(length=9,background="#00000000"))
+        widgets.insert(7, widget.Systray())
+        widgets.insert(8 , widget.Spacer(length=9,background="#00000000"))
+        # widgets.insert(6, widget.Systray())
+    return widgets
 
 screens = [
     Screen(
-        top=Bar(
-            [
-                groupbox,
-                spacer,
-                WindowName(foreground=gruvbox["fg"]),
-                Spacer(length=10, background=gruvbox["yellow"]),
-                TextBox(
-                    text="",
-                    fontsize=22,
-                    background=gruvbox["yellow"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                CPU(background=gruvbox["yellow"], format='{load_percent}%'),
-                Spacer(length=10, background=gruvbox["yellow"]),
-                Spacer(length=10, background=gruvbox["green"]),
-                TextBox(
-                    text="",
-                    fontsize=22,
-                    background=gruvbox["green"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                Battery(background=gruvbox["green"]),
-                Spacer(length=10, background=gruvbox["green"]),
-                Spacer(length=10, background=gruvbox["red"]),
-                TextBox(
-                    text="",
-                    fontsize=22,
-                    background=gruvbox["red"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                Memory(measure_mem="G", background=gruvbox["red"]),
-                Spacer(length=10, background=gruvbox["red"]),
-                Spacer(length=15, background=gruvbox["dark-blue"]),
-                TextBox(
-                    text="墳",
-                    fontsize=22,
-                    background=gruvbox["dark-blue"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                Volume(
-                    volume_down_command=SOUND_VOLUME_DOWN,
-                    volume_up_command=SOUND_VOLUME_UP,
-                    mute_command=SOUND_VOLUME_TOGGLE_MUTE,
-                    background=gruvbox["dark-blue"],
-                ),
-                Spacer(length=15, background=gruvbox["dark-blue"]),
-                spacer,
-                TextBox(
-                    text="",
-                    fontsize=22,
-                    background=gruvbox["bg"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                Clock(
-                    padding=8,
-                    background=gruvbox["bg"],
-                    foreground=gruvbox["white"],
-                    format="%d/%m/%Y %H:%M",
-                ),
-                spacer,
-                Spacer(length=10, background=gruvbox["bg"]),
-                Systray(background=gruvbox["bg"], padding=5),
-                Spacer(length=15, background=gruvbox["bg"]),
-                spacer,
-                TextBox(
-                    text=" ",
-                    mouse_callbacks={
-                        "Button1": lambda: qtile.cmd_spawn("gnome-control-center")
-                    },
-                    fontsize=18,
-                    background=gruvbox["bg0"],
-                    foreground=gruvbox["yellow"],
-                    padding=0,
-                ),
-                spacer,
-                TextBox(
-                    text="",
-                    mouse_callbacks={
-                        "Button1": lambda: qtile.cmd_spawn("shutdown now")
-                    },
-                    fontsize=22,
-                    background=gruvbox["bg0"],
-                    foreground=gruvbox["red"],
-                    padding=0,
-                ),
-                spacer,
-            ],
-            background=gruvbox["bg"],
-            size=26,
-        )
-    ),
-    Screen(
-        top=Bar(
-            [
-                groupbox,
-                spacer,
-                WindowName(foreground=gruvbox["fg"]),
-                Clock(
-                    padding=8,
-                    background=gruvbox["bg0"],
-                    foreground=gruvbox["white"],
-                    format=" %d/%m/%Y %H:%M",
-                ),
-                spacer,
-                Spacer(length=15, background=gruvbox["dark-blue"]),
-                TextBox(
-                    text="墳",
-                    fontsize=22,
-                    background=gruvbox["dark-blue"],
-                    foreground=gruvbox["white"],
-                    padding=0,
-                ),
-                Volume(
-                    volume_down_command=SOUND_VOLUME_DOWN,
-                    volume_up_command=SOUND_VOLUME_UP,
-                    mute_command=SOUND_VOLUME_TOGGLE_MUTE,
-                    background=gruvbox["dark-blue"],
-                ),
-                Spacer(length=15, background=gruvbox["dark-blue"]),
-            ],
-            background=gruvbox["bg"],
-            size=26,
-        )
+        top=bar.Bar(
+            get_widgets(primary=True),
+            22,
+            background="#00000000",
+        ),
     ),
 ]
 
+# Drag floating layouts.
 mouse = [
-    Drag(
-        [mod],
-        "Button1",
-        lazy.window.set_position_floating(),
-        start=lazy.window.get_position(),
-    ),
-    Drag(
-        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
-    ),
+    Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
+    Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
 dgroups_key_binder = None
-dgroups_app_rules = []
+dgroups_app_rules = []  # type: list
 follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
@@ -336,17 +329,24 @@ floating_layout = layout.Floating(
         Match(title="pinentry"),  # GPG key password entry
     ]
 )
-
-
-@hook.subscribe.startup_once
-def autostart():
-    home = os.path.expanduser("~/.config/qtile/autostart.sh")
-    subprocess.Popen([home])
-
-
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
+
+# If things like steam games want to auto-minimize themselves when losing
+# focus, should we respect this or not?
 auto_minimize = True
+
+# When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = None
+
+# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
+# string besides java UI toolkits; you can see several discussions on the
+# mailing lists, GitHub issues, and other WM documentation that suggest setting
+# this string if your java app doesn't work correctly. We may as well just lie
+# and say that we're a working one by default.
+#
+# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
+# java that happens to be on java's whitelist.
 wmname = "LG3D"
+

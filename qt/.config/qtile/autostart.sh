@@ -4,9 +4,7 @@ lxsession &
 picom &
 volumeicon &
 nm-applet &
-nitrogen --restore  &
-blueman-tray &
+feh --bg-scale '/home/douglas/Pictures/space.jpg' &
 flameshot &
 globalprotect launch-ui &
-xrandr --output HDMI-1 --left-of eDP-1
  
