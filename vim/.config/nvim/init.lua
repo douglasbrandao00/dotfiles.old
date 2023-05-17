@@ -12,4 +12,4 @@ require("user.comment")
 require("user.git")
 require("user.terminal")
 
-vim.cmd([[colorscheme tokyonight]])
+vim.cmd([[colorscheme catppuccin]])
