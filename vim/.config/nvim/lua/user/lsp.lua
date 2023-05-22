@@ -42,7 +42,6 @@ local servers = {
   pyright = {},
   rust_analyzer = {},
   tsserver = {},
-  java_language_server = {},
   kotlin_language_server = {},
   bashls = {},
   lua_ls = {

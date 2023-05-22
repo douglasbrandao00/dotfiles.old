@@ -4,8 +4,6 @@
 plug "zap-zsh/supercharge"
 plug "zsh-users/zsh-autosuggestions"
 plug "zsh-users/zsh-syntax-highlighting"
-
-# Example theme
 plug "zap-zsh/zap-prompt"
 plug "jeffreytse/zsh-vi-mode"
 
@@ -16,20 +14,10 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
 
 
-alias la="ls -la"
 alias cls="clear"
-alias alac="vim ~/.config/alacritty.yml"
-alias zshrc="vim ~/dotfiles/zsh/.zshrc"
-alias vimrc="vim ~/dotfiles/vim/.config/nvim/"
 alias qt="vim ~/.config/qtile/config.py"
-alias sozsh="source ~/.zshrc"
 alias vim="nvim"
-alias _cat="cat"
-alias cat="bat"
-alias ls="exa --icons"
-alias ll="exa -l --icons"
-alias top="ytop"
-# alias asdf="$HOME/.asdf/bin/asdf"
+alias tmz="~/tmux-session-manager"
 
 setopt NO_NOMATCH
 

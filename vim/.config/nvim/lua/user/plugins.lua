@@ -17,6 +17,7 @@ local plugins = {
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-sleuth',
+  'christoomey/vim-tmux-navigator',
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -45,18 +46,11 @@ local plugins = {
   },
   "lunarvim/darkplus.nvim",
   "folke/tokyonight.nvim",
+  "xiyaowong/transparent.nvim",
   { "catppuccin/nvim", name = "catppuccin" },
-  {
-    'nvim-lualine/lualine.nvim',
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
+  { 'akinsho/bufferline.nvim', version = "*" },
+  { 'nvim-lualine/lualine.nvim' },
+
   {
     'lukas-reineke/indent-blankline.nvim',
     opts = {
