@@ -17,7 +17,7 @@ export PATH="$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
 alias cls="clear"
 alias qt="vim ~/.config/qtile/config.py"
 alias vim="nvim"
-alias tmz="~/tmux-session-manager"
+alias tmz="~/.config/tmux/tmux-session-manager"
 
 setopt NO_NOMATCH
 

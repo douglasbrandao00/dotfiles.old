@@ -1,0 +1,54 @@
+#! /bin/bash
+tmux ls &>/dev/null
+TMUX_STATUS=$?
+
+BASE_PATH="$HOME/www"
+
+# has tmux running
+# is in a tmux session
+# tmux has this session open
+
+PROJECT=$(ls $BASE_PATH | fzf)
+OPEN_SESSIONS=$(tmux ls -F '#S' | awk 'BEGIN { ORS = " " } { print }')
+
+if [[ -z $PROJECT ]]; then
+  echo "invalid project"
+  exit 0
+fi
+
+# not attached to tmux AND session (project) is running
+if [[ "$TMUX" = "" && "$OPEN_SESSIONS" == *"$PROJECT"* ]]; then 
+ tmux attach -t "$PROJECT" 
+fi
+
+# not attached to tmux AND session (project) is NOT running
+if [[ "$TMUX" = "" && ! "$OPEN_SESSIONS" == *"$PROJECT"* ]]; then 
+  tmux new-session -s "$PROJECT" -c "$BASE_PATH/$PROJECT"
+fi
+
+
+# attached to tmux AND session (project) is running
+if [[ ! "$TMUX" = "" && "$OPEN_SESSIONS" == *"$PROJECT"* ]]; then 
+ tmux switch-client -t "$PROJECT"  
+fi
+
+# attached to tmux AND session (project) is NOT running
+if [[ ! "$TMUX" = "" && ! "$OPEN_SESSIONS" == *"$PROJECT"* ]]; then 
+  tmux new-session -d -s "$PROJECT" -c "$BASE_PATH/$PROJECT"
+  tmux switch-client -t "$PROJECT" 
+fi
+
+
+
+
+#
+#
+#
+# if [[ "$OPEN_SESSIONS" == *"$PROJECT"* ]]; then 
+#   echo "UUUU"
+# else 
+#    #   echo "nao"
+# fi
+#
+# echo "pro $PROJECT"
+# echo $OPEN_SESSIONS
