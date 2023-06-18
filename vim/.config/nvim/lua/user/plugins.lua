@@ -23,7 +23,7 @@ local plugins = {
     dependencies = {
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
       'folke/neodev.nvim',
       'jose-elias-alvarez/null-ls.nvim'
     },
@@ -47,8 +47,8 @@ local plugins = {
   "lunarvim/darkplus.nvim",
   "folke/tokyonight.nvim",
   "xiyaowong/transparent.nvim",
-  { "catppuccin/nvim", name = "catppuccin" },
-  { 'akinsho/bufferline.nvim', version = "*" },
+  { "catppuccin/nvim",          name = "catppuccin" },
+  { 'akinsho/bufferline.nvim',  version = "*" },
   { 'nvim-lualine/lualine.nvim' },
 
   {
@@ -58,7 +58,7 @@ local plugins = {
       show_trailing_blankline_indent = false,
     },
   },
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',         opts = {} },
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
   {
     'nvim-telescope/telescope-fzf-native.nvim',
@@ -74,12 +74,21 @@ local plugins = {
     },
     build = ":TSUpdate",
   },
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {},
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+  },
   "kyazdani42/nvim-web-devicons",
   "kyazdani42/nvim-tree.lua",
   "rafamadriz/friendly-snippets",
   "windwp/nvim-ts-autotag",
   "windwp/nvim-autopairs",
-  "akinsho/toggleterm.nvim"
+  "akinsho/toggleterm.nvim",
 }
 local options = {}
 
